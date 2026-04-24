@@ -20,8 +20,14 @@ export const Login = () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password })
             });
-            const data = await resp.json();
-            console.log("Respuesta:", resp.status, data);
+            console.log("Respuesta status:", resp.status);
+            let data;
+            try {
+                data = await resp.json();
+            } catch {
+                setError("El servidor no devolvió una respuesta válida. Verifica que el backend esté corriendo y que el puerto 3001 sea público.");
+                return;
+            }
             if (resp.ok) {
                 sessionStorage.setItem("token", data.token);
                 dispatch({ type: "login", payload: data.token });
@@ -31,7 +37,7 @@ export const Login = () => {
             }
         } catch (err) {
             console.error("Error en login:", err);
-            setError("Error de conexión con el servidor: " + err.message);
+            setError("Error de conexión con el servidor. Verifica que el backend esté corriendo.");
         }
     };
 
